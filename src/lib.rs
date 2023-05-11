@@ -1,22 +1,22 @@
 #[derive(Debug)]
-struct FileConfig {
-    input_file_name: String
+pub struct FileConfig {
+    pub input_file_name: String
 }
 
 #[derive(Debug)]
-enum ConfigType {
+pub enum ConfigType {
     HelpConfig,
     InterpreterConfig(FileConfig)
 }
 
 #[derive(PartialEq)]
 #[derive(Debug)]
-enum ArgError {
+pub enum ArgError {
     NotEnoughArgs,
     WrongArg
 }
 
-fn parse_config(mut args: impl Iterator<Item = String>) -> Result<ConfigType, ArgError> {
+pub fn parse_config(mut args: impl Iterator<Item = String>) -> Result<ConfigType, ArgError> {
     args.next();
 
     let mut file_config = FileConfig { input_file_name: String::from("") };
@@ -24,7 +24,6 @@ fn parse_config(mut args: impl Iterator<Item = String>) -> Result<ConfigType, Ar
         if [String::from("-h"), String::from("--help")].contains(arg) {
             return Ok(ConfigType::HelpConfig);
         } else if arg.chars().nth(0).unwrap() != '-' {
-            println!("MADE IT");
             file_config.input_file_name = String::from(arg);
         } else {
             return Err(ArgError::WrongArg);
@@ -36,6 +35,17 @@ fn parse_config(mut args: impl Iterator<Item = String>) -> Result<ConfigType, Ar
     } else {
         Ok(ConfigType::InterpreterConfig(file_config))
     }
+}
+
+pub fn print_help(warning: Option<&str>) {
+    let prelude = match warning {
+        Some(message) => format!("{}\n\n", message),
+        None => String::new()
+    };
+    println!("{}something <FILE_NAME>
+
+something -h | --help
+    prints this help message", prelude);
 }
 
 #[cfg(test)]
