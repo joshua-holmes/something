@@ -1,17 +1,19 @@
 use std::env;
-use something::{self, ConfigType, print_help};
+use something::{config, cli};
 
 fn main() {
     let args = env::args();
-    let config = something::parse_config(args);
+    let config = config::parse_config(args);
     match config {
         Ok(config_type) => { match config_type {
-            ConfigType::InterpreterConfig(file_config) => { println!("LOADING FILE: {}", file_config.input_file_name) }
-            ConfigType::HelpConfig => {
-                something::print_help(None)
+            config::ConfigType::InterpreterConfig(file_config) => {
+                println!("LOADING FILE: {}", file_config.input_file_name)
+            }
+            config::ConfigType::HelpConfig => {
+                cli::print_help(None)
             }
         } }
-        Err(err) => { print_help(Some(format!("{:?}", err).as_str())) }
+        Err(err) => { cli::print_help(Some(format!("{:?}", err).as_str())) }
     }
 }
 
