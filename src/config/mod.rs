@@ -37,7 +37,7 @@ pub fn parse_config(mut args: impl Iterator<Item = String>) -> Result<ConfigType
     }
 
     if wrong_args.len() > 0 {
-        Err(ArgError::WrongArgs(wrong_args))
+        Err(ArgError::WrongArgs { wrong_args })
     } else if exe_config.input_file_name == String::new() {
         Err(ArgError::NotEnoughArgs)
     } else {
@@ -91,15 +91,26 @@ mod tests {
 
     #[test]
     fn returns_error_if_wrong_args() {
-        let args = vec![String::new(), String::from("-b")].into_iter();
+        let args = vec![
+            String::new(),
+            String::from("fname"),
+            String::from("wrongarg"),
+            String::from("-w"),
+            String::from("--wrongarg")
+        ].into_iter();
         let result = parse_config(args);
 
-        assert_eq!(result.unwrap_err(), ArgError::WrongArg);
-
-        let args = vec![String::new(), String::from("--bob")].into_iter();
-        let result = parse_config(args);
-
-        assert_eq!(result.unwrap_err(), ArgError::WrongArg);
+        assert!(result.is_err(), "Parsing config should have returned an error and did not!");
+        match result.unwrap_err() {
+            ArgError::WrongArgs { wrong_args } => {
+                assert_eq!(wrong_args, [
+                    String::from("wrongarg"),
+                    String::from("-w"),
+                    String::from("--wrongarg"),
+                ])
+            }
+            _ => assert!(false, "Parsing config should have returned ArgError::WrongArgs")
+        }
     }
 }
 

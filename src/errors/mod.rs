@@ -4,7 +4,7 @@ use std::fmt;
 #[derive(Debug)]
 pub enum ArgError {
     NotEnoughArgs,
-    WrongArgs(Vec<String>)
+    WrongArgs { wrong_args: Vec<String> }
 }
 
 struct ErrMsg<'a> {
@@ -19,9 +19,9 @@ impl fmt::Display for ArgError {
                 type_as_string: "NotEnoughArgs",
                 msg: String::from("Not enough arguments!")
             } }
-            ArgError::WrongArgs(args) => { ErrMsg {
+            ArgError::WrongArgs { wrong_args } => { ErrMsg {
                 type_as_string: "WrongArgs",
-                msg: format!("Incorrect argument(s): {}", args.join(", "))
+                msg: format!("Incorrect argument(s): {}", wrong_args.join(", "))
             } }
         };
 
