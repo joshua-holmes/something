@@ -10,10 +10,10 @@ fn main() {
                 println!("LOADING FILE: {}", file_config.input_file_name)
             }
             config::ConfigType::HelpConfig => {
-                cli::print_help(None)
+                cli::print_help("Welcome to Something!")
             }
         } }
-        Err(err) => { cli::print_help(Some(format!("{:?}", err).as_str())) }
+        Err(err) => { cli::print_help(err) }
     }
 }
 
