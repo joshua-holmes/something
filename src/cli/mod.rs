@@ -1,7 +1,7 @@
-use std::fmt::Debug;
+use std::fmt::Display;
 
-pub fn print_help(prefix: impl Debug) {
-    println!("{:?}
+pub fn print_help(prefix: impl Display) {
+    println!("{}
 something <FILE_NAME>
 
 something -h | --help

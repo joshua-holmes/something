@@ -1,34 +1,47 @@
-use super::errors;
+use super::errors::ArgError;
 
 #[derive(Debug)]
-pub struct FileConfig {
+pub struct ExeConfig {
     pub input_file_name: String
+}
+
+impl ExeConfig {
+    fn new() -> Self {
+        Self { input_file_name: String::new() }
+    }
+
+    fn is_empty(&self) -> bool {
+        self.input_file_name == String::new()
+    }
 }
 
 #[derive(Debug)]
 pub enum ConfigType {
     HelpConfig,
-    InterpreterConfig(FileConfig)
+    InterpreterConfig(ExeConfig)
 }
 
-pub fn parse_config(mut args: impl Iterator<Item = String>) -> Result<ConfigType, errors::ArgError> {
+pub fn parse_config(mut args: impl Iterator<Item = String>) -> Result<ConfigType, ArgError> {
     args.next();
 
-    let mut file_config = FileConfig { input_file_name: String::from("") };
+    let mut exe_config = ExeConfig::new();
+    let mut wrong_args = Vec::new();
     for ref arg in args {
         if [String::from("-h"), String::from("--help")].contains(arg) {
             return Ok(ConfigType::HelpConfig);
-        } else if arg.chars().nth(0).unwrap() != '-' {
-            file_config.input_file_name = String::from(arg);
+        } else if arg.chars().nth(0).unwrap() != '-' && exe_config.is_empty() {
+            exe_config.input_file_name = String::clone(arg);
         } else {
-            return Err(errors::ArgError::WrongArg);
+            wrong_args.push(String::clone(arg));
         }
     }
 
-    if file_config.input_file_name == String::new() {
-        Err(errors::ArgError::NotEnoughArgs)
+    if wrong_args.len() > 0 {
+        Err(ArgError::WrongArgs(wrong_args))
+    } else if exe_config.input_file_name == String::new() {
+        Err(ArgError::NotEnoughArgs)
     } else {
-        Ok(ConfigType::InterpreterConfig(file_config))
+        Ok(ConfigType::InterpreterConfig(exe_config))
     }
 }
 
@@ -61,8 +74,8 @@ mod tests {
         let result = parse_config(args);
 
         match result.unwrap() {
-            ConfigType::InterpreterConfig(file_config) => {
-                assert_eq!(file_config.input_file_name, String::from("fun-file-name.sg"))
+            ConfigType::InterpreterConfig(exe_config) => {
+                assert_eq!(exe_config.input_file_name, String::from("fun-file-name.sg"))
             }
             _ => assert!(false)
         }
@@ -73,7 +86,7 @@ mod tests {
         let args = vec![String::new()].into_iter();
         let result = parse_config(args);
 
-        assert_eq!(result.unwrap_err(), errors::ArgError::NotEnoughArgs);
+        assert_eq!(result.unwrap_err(), ArgError::NotEnoughArgs);
     }
 
     #[test]
@@ -81,12 +94,12 @@ mod tests {
         let args = vec![String::new(), String::from("-b")].into_iter();
         let result = parse_config(args);
 
-        assert_eq!(result.unwrap_err(), errors::ArgError::WrongArg);
+        assert_eq!(result.unwrap_err(), ArgError::WrongArg);
 
         let args = vec![String::new(), String::from("--bob")].into_iter();
         let result = parse_config(args);
 
-        assert_eq!(result.unwrap_err(), errors::ArgError::WrongArg);
+        assert_eq!(result.unwrap_err(), ArgError::WrongArg);
     }
 }
 
