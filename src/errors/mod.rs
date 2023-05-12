@@ -28,3 +28,16 @@ impl fmt::Display for ArgError {
         write!(f, "ArgError::{} => {}\n", err_msg.type_as_string, err_msg.msg)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::ArgError;
+
+    #[test]
+    fn implements_display() {
+        assert_eq!(
+            format!("{}", ArgError::NotEnoughArgs)[..23],
+            String::from("ArgError::NotEnoughArgs")
+        )
+    }
+}

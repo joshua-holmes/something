@@ -56,7 +56,7 @@ mod tests {
 
         match result.unwrap() {
             ConfigType::HelpConfig => { assert!(true) }
-            _ => { assert!(false) }
+            _ => { assert!(false, "Argument '-h' did not return HelpConfig type") }
         }
 
         let args = vec![String::new(), String::from("--help")].into_iter();
@@ -64,7 +64,7 @@ mod tests {
 
         match result.unwrap() {
             ConfigType::HelpConfig => { assert!(true) }
-            _ => { assert!(false) }
+            _ => { assert!(false, "Argument '--help' did not return HelpConfig type") }
         }
     }
 
@@ -77,7 +77,7 @@ mod tests {
             ConfigType::InterpreterConfig(exe_config) => {
                 assert_eq!(exe_config.input_file_name, String::from("fun-file-name.sg"))
             }
-            _ => assert!(false)
+            _ => assert!(false, "Did not return InterpreterConfig type")
         }
      }
 
