@@ -1,18 +1,22 @@
-use std::env;
-use something::{config, cli};
+use std::{env, process::exit};
+use something::{config, cli, interpreter};
 
 fn main() {
-    let config = config::parse_config(env::args());
+    let config = match config::parse_config(env::args()) {
+        Ok(config) => { config }
+        Err(err) => {
+            cli::print_help(err);
+            exit(1);
+        }
+    };
+
     match config {
-        Ok(config_type) => { match config_type {
-            config::ConfigType::InterpreterConfig(exe_config) => {
-                println!("LOADING FILE: {}", exe_config.input_file_name)
-            }
-            config::ConfigType::HelpConfig => {
-                cli::print_help("Welcome to Something!")
-            }
-        } }
-        Err(err) => { cli::print_help(err) }
+        config::ConfigType::InterpreterConfig(exe_config) => {
+            interpreter::interpret(exe_config).unwrap();
+        }
+        config::ConfigType::HelpConfig => {
+            cli::print_help("Welcome to Something!");
+        }
     }
 }
 
