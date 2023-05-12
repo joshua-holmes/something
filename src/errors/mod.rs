@@ -25,7 +25,7 @@ impl fmt::Display for ArgError {
             } }
         };
 
-        write!(f, "ArgError::{} => {}\n", err_msg.type_as_string, err_msg.msg)
+        write!(f, "ArgError::{} => {}", err_msg.type_as_string, err_msg.msg)
     }
 }
 
