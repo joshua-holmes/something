@@ -1,0 +1,8 @@
+seven = 7;
+six = 6;
+
+string = "this is a string";
+
+MATH1 = 1 + 2;
+
+MATH2 = seven + six;
