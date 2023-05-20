@@ -1,32 +1,6 @@
 use std::fs::File;
 use std::io::{prelude::*, Result as ResultIO};
 
-pub struct Block(Vec<Statement>);
-
-impl Block {
-    fn new() -> Self {
-        Self(Vec::new())
-    }
-    fn push(&mut self, value: Statement) {
-        self.0.push(value);
-    }
-}
-
-struct Statement {
-    string: String
-}
-
-impl Statement {
-    fn new() -> Self {
-        Self { string: String::new() }
-    }
-    fn set(&mut self, value: String) {
-        self.string = value;
-    }
-    fn get(&self) -> &String {
-        &self.string
-    }
-}
 
 pub fn file_to_string(file_name: &str) -> ResultIO<String> {
     let mut buffer = String::new();
@@ -39,10 +13,17 @@ pub fn file_to_string(file_name: &str) -> ResultIO<String> {
 // TODO: write this function
 pub fn string_to_ast(text: String) -> Block {
     let mut block = Block::new();
-    for line in text.split("\n") {
+    for line in text.split(";") {
+        let mut statement = Statement::new();
+        statement.set(String::from(line));
+        block.statements.push(statement);
+        println!("{}", line)
     }
 
     block
+}
+
+fn hoist(statement: Statement) {
 }
 
 #[cfg(test)]
