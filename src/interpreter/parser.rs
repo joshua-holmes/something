@@ -1,6 +1,7 @@
 use std::fs::File;
 use std::io::{prelude::*, Result as ResultIO};
 
+use super::ast;
 
 pub fn file_to_string(file_name: &str) -> ResultIO<String> {
     let mut buffer = String::new();
@@ -11,19 +12,20 @@ pub fn file_to_string(file_name: &str) -> ResultIO<String> {
 }
 
 // TODO: write this function
-pub fn string_to_ast(text: String) -> Block {
-    let mut block = Block::new();
+pub fn hoist(text: String) -> ast::Block {
+    let mut block = ast::Block::new();
     for line in text.split(";") {
-        let mut statement = Statement::new();
-        statement.set(String::from(line));
-        block.statements.push(statement);
-        println!("{}", line)
+        string_to_ast(line, &mut block);
     }
 
     block
 }
 
-fn hoist(statement: Statement) {
+fn string_to_ast(line: &str, block: &mut ast::Block) {
+    let mut statement = ast::Statement::new();
+    statement.set(line);
+    block.statements.push(statement);
+    println!("{}", line)
 }
 
 #[cfg(test)]

@@ -1,31 +1,33 @@
 use std::any::Any;
 
-pub struct Block { statements: Vec<Statement> }
+pub struct Block { pub statements: Vec<Statement> }
 
 impl Block {
-    fn new() -> Self {
+    pub fn new() -> Self {
         Self { statements: Vec::new() }
     }
 }
 
-struct Statement {
-    string: String
+pub struct Statement<'a> {
+    string: &'a str
 }
 
-impl Statement {
-    fn new() -> Self {
-        Self { string: String::new() }
+impl <'a> Statement<'a> {
+    pub fn new(string: &str) -> Self {
+        Self { string }
     }
-    fn set(&mut self, value: String) {
+
+    pub fn set(&mut self, value: &str) {
         self.string = value;
     }
-    fn get(&self) -> &String {
+
+    pub fn get(&self) -> &str {
         &self.string
     }
 }
 
 enum Expression<'a> {
-    Calcuation(&'a Expression, &'a Operator, &'a Expression),
+    Calcuation(&'a Expression<'a>, &'a Operator, &'a Expression<'a>),
     Variable(&'a str),
     Value(Box<&'a dyn Any>)
 }
