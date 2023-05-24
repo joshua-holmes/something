@@ -11,20 +11,17 @@ pub fn file_to_string(file_name: &str) -> ResultIO<String> {
     Ok(buffer)
 }
 
-// TODO: write this function
-pub fn hoist(text: String) -> ast::Block {
+pub fn hoist<'a>(text: String) -> ast::Block<'a> {
     let mut block = ast::Block::new();
     for line in text.split(";") {
-        string_to_ast(line, &mut block);
+        insert_into_block(line, &mut block);
     }
 
     block
 }
 
-fn string_to_ast(line: &str, block: &mut ast::Block) {
-    let mut statement = ast::Statement::new();
-    statement.set(line);
-    block.statements.push(statement);
+// TODO: write this function so test passes
+fn insert_into_block(line: &str, block: &mut ast::Block) {
     println!("{}", line)
 }
 
@@ -45,5 +42,18 @@ mod tests {
         let extracted = result.unwrap();
 
         assert_eq!(extracted, String::from(file_contents))
+    }
+
+    #[test]
+    fn string_to_set_statement() {
+        let line = "six = 6";
+        let mut block = ast::Block::new();
+        insert_into_block(line, &mut block);
+
+        if let Some(statement) = block.statements.first() {
+            assert_eq!(statement.key, "six");
+        } else {
+            assert!(false, "`block.statements` should have contained at least 1 value");
+        }
     }
 }
