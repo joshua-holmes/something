@@ -51,7 +51,16 @@ mod tests {
         insert_into_block(line, &mut block);
 
         if let Some(statement) = block.statements.first() {
-            assert_eq!(statement.key, "six");
+            if let ast::Statement::Set { key, value } = statement {
+                assert_eq!(key, &"six");
+                if let ast::Expression::Value(val) = value {
+                    if let ast::ValidType::Int(v) = val {
+                        assert_eq!(**v, 6);
+                    }
+                }
+            } else {
+                assert!(false, "`statement` is not `ast::Statement::Set` type");
+            }
         } else {
             assert!(false, "`block.statements` should have contained at least 1 value");
         }

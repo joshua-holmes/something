@@ -11,6 +11,12 @@ impl <'a> Block<'a> {
 }
 
 #[derive(Debug)]
+pub enum ValidType<'a> {
+    Int(&'a i32),
+    Str(&'a str)
+}
+
+#[derive(Debug)]
 pub enum Statement<'a> {
     Set { key: &'a str, value: &'a Expression<'a> },
     DoNothing { value: &'a Expression<'a> },
@@ -20,7 +26,7 @@ pub enum Statement<'a> {
 pub enum Expression<'a> {
     Calcuation(&'a Expression<'a>, &'a Operator, &'a Expression<'a>),
     Variable(&'a str),
-    Value(Box<&'a dyn Any>)
+    Value(&'a ValidType<'a>)
 }
 
 #[derive(Debug)]
